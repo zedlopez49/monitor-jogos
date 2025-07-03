@@ -117,8 +117,8 @@ def buscar_jogos(ciclo=0):
 
 def monitorar():
     """Função principal de monitoramento"""
-    logging.info(f"⚽ Iniciando monitoramento (Modo {'TESTE' if MODO_TESTE else 'PRODUÇÃO'})")
-    enviar_telegram(f"🟢 Monitor Iniciado\nModo: {'TESTE' if MODO_TESTE else 'PRODUÇÃO'}")
+    logging.info(f"⚽ Iniciando monitoramento (Modo {'TESTE' if MODO_TESTE else 'ATIVADO'})")
+    enviar_telegram(f"🟢 <b>Monitor Método Minuto 78 iniciado</b>\nStatus: {'TESTE' if MODO_TESTE else 'ATIVADO'}")
 
     ciclo = 0
     ultimo_heartbeat = time.time()
@@ -130,11 +130,11 @@ def monitorar():
             # Verifica se é hora de enviar o alerta de operação
             if agora - ultimo_heartbeat >= HEARTBEAT_INTERVAL:
                 mensagem_status = (
-                    f"🟢 <b>Status do Monitor</b>\n"
+                    f"🟢 <b>MMM78 está ativo</b>\n"
                     f"📅 {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}\n"
-                    f"⚙️ Operando normalmente\n"
+                    f"⚙️ Status: {'TESTE' if MODO_TESTE else 'ATIVADO'}\n"
                     f"🔄 Ciclos completados: {ciclo}\n"
-                    f"📡 Modo: {'TESTE' if MODO_TESTE else 'PRODUÇÃO'}"
+                    f"🔍 Verificando placares: {', '.join(TARGET_SCORES)}"
                 )
                 enviar_telegram(mensagem_status)
                 ultimo_heartbeat = agora
@@ -183,10 +183,10 @@ def monitorar():
 
     except KeyboardInterrupt:
         logging.info("Monitoramento encerrado pelo usuário")
-        enviar_telegram("🔴 Monitor Desativado")
+        enviar_telegram("🔴 <b>Monitor Método Minuto 78 Desativado</b>")
     except Exception as e:
         logging.critical(f"ERRO GRAVE: {e}")
-        enviar_telegram(f"🔴 <b>Falha crítica:</b>\n{str(e)}")
+        enviar_telegram(f"🔴 <b>Monitor em erro:</b>\n{str(e)}")
 
 # ========= EXECUÇÃO =========
 if __name__ == "__main__":
@@ -199,7 +199,8 @@ if __name__ == "__main__":
 
     print(f"\n{'='*50}")
     print(f"⚙️ Configurações Carregadas")
-    print(f"Modo: {'TESTE' if MODO_TESTE else 'PRODUÇÃO'}")
+    print(f"Monitor: Método Minuto 78")
+    print(f"Status: {'TESTE' if MODO_TESTE else 'ATIVADO'}")
     print(f"Intervalo: {INTERVALO_TESTE if MODO_TESTE else CHECK_INTERVAL}s")
     print(f"Placar Alvo: {', '.join(TARGET_SCORES)}")
     print(f"Intervalo Heartbeat: {HEARTBEAT_INTERVAL//3600}h")
