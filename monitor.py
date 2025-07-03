@@ -88,7 +88,12 @@ def monitorar():
         print(f"[ERRO CRÍTICO] {e}")
         enviar_telegram(f"🔴 <b>Falha crítica:</b>\n{str(e)}")
         raise  # Para aparecer nos logs do GitHub
-
+- name: Notificar falha
+  if: failure()
+  run: |
+    curl -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage" \
+    -d "chat_id=${{ secrets.CHAT_ID }}" \
+    -d "text=❌ Monitor falhou! Verifique GitHub Actions"
 if __name__ == "__main__":
     # Configuração especial para GitHub Actions
     try:
