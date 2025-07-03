@@ -11,7 +11,7 @@ TELEGRAM_CHAT_ID = '949822874'
 CHECK_INTERVAL = 60  # Intervalo em produção (segundos)
 
 # Modo operacional
-MODO_TESTE = True  # True para teste, False para produção
+MODO_TESTE = False  # True para teste, False para produção
 INTERVALO_TESTE = 10  # Intervalo entre verificações em modo teste (segundos)
 
 # Placar alvo no minuto 73
