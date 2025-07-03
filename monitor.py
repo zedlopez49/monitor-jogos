@@ -1,3 +1,14 @@
+import logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[logging.StreamHandler()]
+)
+
+print("=== INICIANDO VERIFICAÇÃO ===")
+print(f"Python version: {sys.version}")
+print(f"Requests version: {requests.__version__}")
+
 import requests
 import time
 from datetime import datetime
