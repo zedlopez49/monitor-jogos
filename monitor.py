@@ -8,11 +8,11 @@ import sys
 API_KEY = '0b671451eedf48c69929eb752fb15928'
 TELEGRAM_TOKEN = '7525855107:AAFEL4KRpSDS_9899udJYhcz-dQ02H6-wQ4'
 TELEGRAM_CHAT_ID = '949822874'
-CHECK_INTERVAL = 60  # Em segundos (produção)
+CHECK_INTERVAL = 60  # Intervalo em produção (segundos)
 
-# Modo operacional (True para teste, False para produção)
-MODO_TESTE = True
-INTERVALO_TESTE = 10  # Segundos entre verificações em modo teste
+# Modo operacional
+MODO_TESTE = True  # True para teste, False para produção
+INTERVALO_TESTE = 10  # Intervalo entre verificações em modo teste (segundos)
 
 # Placar alvo no minuto 73
 TARGET_SCORES = ['0-0', '1-0', '0-1', '1-1', '2-1', '1-2', '2-2', '3-2', '2-3', '3-3']
@@ -37,7 +37,6 @@ def enviar_telegram(mensagem):
 
 def gerar_dados_teste(ciclo=0):
     """Gera dados simulados variados para teste"""
-    # Alterna entre diferentes cenários a cada ciclo
     cenarios = [
         {  # Cenário 1: Dois jogos com alerta
             'jogos': [
@@ -88,7 +87,7 @@ def gerar_dados_teste(ciclo=0):
         }
     ]
     
-    cenario = ciclos % len(cenarios)
+    cenario = ciclo % len(cenarios)
     logging.info(f"\n🔁 Modo Teste - Ciclo {ciclo+1}: {cenarios[cenario]['descricao']}")
     return cenarios[cenario]['jogos']
 
@@ -131,6 +130,7 @@ def monitorar():
                 ciclo += 1
                 continue
 
+            alertas_enviados = 0
             for jogo in jogos:
                 try:
                     casa = jogo['homeTeam'].get('name', jogo['homeTeam']['shortName'])
@@ -150,10 +150,14 @@ def monitorar():
                         )
                         logging.info(mensagem)
                         enviar_telegram(mensagem)
+                        alertas_enviados += 1
 
                 except KeyError as e:
                     logging.warning(f"Dados incompletos do jogo: {e}")
                     continue
+
+            if MODO_TESTE and alertas_enviados == 0:
+                logging.info("ℹ️ Nenhum alerta gerado neste ciclo de teste")
 
             ciclo += 1
             intervalo = INTERVALO_TESTE if MODO_TESTE else CHECK_INTERVAL
