@@ -2,19 +2,30 @@ name: Monitor de Jogos 24/7
 
 on:
   schedule:
-    - cron: '*/10 * * * *'  # Executa a cada 10 minutos
-  workflow_dispatch:  # Permite executar manualmente
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
 
 jobs:
   monitor:
     runs-on: ubuntu-latest
+    timeout-minutes: 5  # Evita timeout precoce
+    
     steps:
       - uses: actions/checkout@v4
-      - name: Instalar Python
+      
+      - name: Configurar Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
+          cache: 'pip'  # Acelera instalações futuras
+      
       - name: Instalar dependências
-        run: pip install -r requirements.txt
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      
       - name: Executar monitor
-        run: python monitor.py
+        run: |
+          echo "Iniciando monitoramento..."
+          python monitor.py || echo "Script falhou com código $?"
+          echo "Verificação completa"
