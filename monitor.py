@@ -9,6 +9,7 @@ API_KEY = '0b671451eedf48c69929eb752fb15928'
 TELEGRAM_TOKEN = '7525855107:AAFEL4KRpSDS_9899udJYhcz-dQ02H6-wQ4'
 TELEGRAM_CHAT_ID = '949822874'
 CHECK_INTERVAL = 60  # Intervalo em produção (segundos)
+HEARTBEAT_INTERVAL = 3600  # Intervalo para alertas de operação (1 hora em segundos)
 
 # Modo operacional
 MODO_TESTE = False  # True para teste, False para produção
@@ -120,8 +121,24 @@ def monitorar():
     enviar_telegram(f"🟢 Monitor Iniciado\nModo: {'TESTE' if MODO_TESTE else 'PRODUÇÃO'}")
 
     ciclo = 0
+    ultimo_heartbeat = time.time()
+    
     try:
         while True:
+            agora = time.time()
+            
+            # Verifica se é hora de enviar o alerta de operação
+            if agora - ultimo_heartbeat >= HEARTBEAT_INTERVAL:
+                mensagem_status = (
+                    f"🟢 <b>Status do Monitor</b>\n"
+                    f"📅 {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}\n"
+                    f"⚙️ Operando normalmente\n"
+                    f"🔄 Ciclos completados: {ciclo}\n"
+                    f"📡 Modo: {'TESTE' if MODO_TESTE else 'PRODUÇÃO'}"
+                )
+                enviar_telegram(mensagem_status)
+                ultimo_heartbeat = agora
+            
             jogos = buscar_jogos(ciclo)
             
             if not jogos:
@@ -185,6 +202,7 @@ if __name__ == "__main__":
     print(f"Modo: {'TESTE' if MODO_TESTE else 'PRODUÇÃO'}")
     print(f"Intervalo: {INTERVALO_TESTE if MODO_TESTE else CHECK_INTERVAL}s")
     print(f"Placar Alvo: {', '.join(TARGET_SCORES)}")
+    print(f"Intervalo Heartbeat: {HEARTBEAT_INTERVAL//3600}h")
     print(f"{'='*50}\n")
 
     monitorar()
